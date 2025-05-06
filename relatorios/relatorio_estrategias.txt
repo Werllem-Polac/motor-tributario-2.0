@@ -1,0 +1,19 @@
+Relatório de Estratégias Tributárias e Operacionais
+===============================================
+
+Produto: Carne Bovina
+ - Estratégia: Aplicar Tese da Desossa + Essencialidade (Prioridade: 10)
+ - Estratégia: Aproveitamento de crédito presumido de ICMS (Operação Interna) (Prioridade: 6)
+
+Produto: Miúdos Comestíveis
+ - Estratégia: Aplicar Tese da Desossa + Essencialidade (Prioridade: 10)
+ - Estratégia: Aproveitamento de crédito presumido de ICMS (Operação Interna) (Prioridade: 6)
+
+Produto: Ração para Animais
+ - Estratégia: Aplicar Regime Especial para Ração Animal (Isenção de PIS/COFINS) (Prioridade: 7)
+ - Estratégia: Aproveitamento de crédito presumido de ICMS (Operação Interna) (Prioridade: 6)
+
+Produto: Ossos
+ - Estratégia: Aplicar Tese da Imunidade Agropecuária (Subprodutos) (Prioridade: 8)
+ - Estratégia: Aproveitamento de crédito presumido de ICMS (Operação Interna) (Prioridade: 6)
+

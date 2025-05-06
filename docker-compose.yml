@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  api:
+    build: ./api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./uploaded_files:/app/uploaded_files
+      - ./base_vetorial:/app/base_vetorial
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+  dashboard:
+    build: ./dashboard
+    ports:
+      - "8050:8050"
+    depends_on:
+      - api
+    environment:
+      - API_URL=http://api:8000
+    command: python app.py
