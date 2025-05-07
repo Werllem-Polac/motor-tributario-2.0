@@ -1,6 +1,6 @@
 # Importando os módulos que criamos
 from api.entrada_dados.leitor_csv import ler_arquivo_csv
-from analise_tributaria.analisador_tributario import analisar_notas
+from api.analise_tributaria.analisador_tributario import analisar_notas
 from analise_operacional.analisador_operacional import analisar_operacao
 from motor_estrategias.motor_estrategias import gerar_estrategias
 from relatorios.gerador_relatorios import gerar_relatorio
