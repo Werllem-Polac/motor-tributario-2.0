@@ -2,17 +2,21 @@ from fastapi import FastAPI, Depends, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from database import SessionLocal, engine
-from models import Base, Empresa, Produto, PerguntaIA
+from models import Base, Empresa, Produto, PerguntaIA, Usuario
+from schemas import EmpresaSchema, ProdutoSchema, PerguntaIASchema, UsuarioLoginSchema, UsuarioCreateSchema
 import os
 import requests
 from datetime import datetime, timedelta
 from jose import jwt
 from passlib.context import CryptContext
-from entrada_dados.leitor_csv import ler_arquivo_csv
 
+# --- Cria tabelas ---
 Base.metadata.create_all(bind=engine)
 
+# --- Inicialização do app ---
 app = FastAPI()
+
+# --- CORS Middleware ---
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -21,7 +25,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- Dependência ---
+# --- Dependência para sessão do banco ---
 def get_db():
     db = SessionLocal()
     try:
@@ -29,7 +33,7 @@ def get_db():
     finally:
         db.close()
 
-# --- Segurança ---
+# --- Configuração de segurança ---
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 SECRET_KEY = "segredo-super-forte"
 ALGORITHM = "HS256"
@@ -40,51 +44,62 @@ def gerar_token(dados: dict, expira_em: int = 60):
     dados_copia.update({"exp": exp})
     return jwt.encode(dados_copia, SECRET_KEY, algorithm=ALGORITHM)
 
+# --- Endpoints principais ---
+
+@app.get("/")
+def home():
+    return {"status": "API Motor Tributário online"}
+
 @app.post("/registrar/")
-def registrar(dados: dict, db: Session = Depends(get_db)):
-    senha_cript = pwd_context.hash(dados["senha"])
-    usuario = Usuario(email=dados["email"], senha_hash=senha_cript)
+def registrar(dados: UsuarioCreateSchema, db: Session = Depends(get_db)):
+    senha_cript = pwd_context.hash(dados.senha)
+    usuario = Usuario(email=dados.email, senha_hash=senha_cript)
     db.add(usuario)
     db.commit()
-    return {"msg": "Usuario criado com sucesso"}
+    return {"msg": "Usuário criado com sucesso"}
 
 @app.post("/login")
-def login(dados: dict, db: Session = Depends(get_db)):
-    usuario = db.query(Usuario).filter(Usuario.email == dados["email"]).first()
-    if not usuario or not pwd_context.verify(dados["senha"], usuario.senha_hash):
+def login(dados: UsuarioLoginSchema, db: Session = Depends(get_db)):
+    usuario = db.query(Usuario).filter(Usuario.email == dados.email).first()
+    if not usuario or not pwd_context.verify(dados.senha, usuario.senha_hash):
         raise HTTPException(status_code=401, detail="Credenciais inválidas")
     token = gerar_token({"sub": usuario.email})
     return {"access_token": token}
 
 @app.post("/empresas/")
-async def criar_empresa(empresa: EmpresaSchema):
-    empresa = Empresa(**dados)
-    db.add(empresa)
+def criar_empresa(dados: EmpresaSchema, db: Session = Depends(get_db)):
+    nova = Empresa(**dados.dict())
+    db.add(nova)
     db.commit()
-    return {"msg": "Empresa criada"}
+    return {"msg": "Empresa criada com sucesso"}
 
 @app.get("/empresas/{cnpj}")
 def buscar_empresa(cnpj: str, db: Session = Depends(get_db)):
-    return db.query(Empresa).filter(Empresa.cnpj == cnpj).first()
+    empresa = db.query(Empresa).filter(Empresa.cnpj == cnpj).first()
+    if not empresa:
+        raise HTTPException(status_code=404, detail="Empresa não encontrada")
+    return empresa
 
 @app.post("/produtos/")
-def add_produto(p: dict, db: Session = Depends(get_db)):
-    produto = Produto(**p)
+def add_produto(p: ProdutoSchema, db: Session = Depends(get_db)):
+    produto = Produto(**p.dict())
     db.add(produto)
     db.commit()
-    return {"msg": "Produto salvo"}
+    return {"msg": "Produto salvo com sucesso"}
 
 @app.get("/produtos/{cnpj}")
 def produtos_por_cnpj(cnpj: str, db: Session = Depends(get_db)):
     empresa = db.query(Empresa).filter(Empresa.cnpj == cnpj).first()
-    return db.query(Produto).filter(Produto.empresa_id == empresa.id).all() if empresa else []
+    if not empresa:
+        return []
+    return db.query(Produto).filter(Produto.empresa_id == empresa.id).all()
 
 @app.post("/perguntas/")
-def registrar_pergunta(p: dict, db: Session = Depends(get_db)):
-    pergunta = PerguntaIA(**p)
+def registrar_pergunta(p: PerguntaIASchema, db: Session = Depends(get_db)):
+    pergunta = PerguntaIA(**p.dict())
     db.add(pergunta)
     db.commit()
-    return {"msg": "Pergunta registrada"}
+    return {"msg": "Pergunta registrada com sucesso"}
 
 @app.get("/perguntas/{cnpj}")
 def perguntas_por_cnpj(cnpj: str, db: Session = Depends(get_db)):
@@ -92,8 +107,8 @@ def perguntas_por_cnpj(cnpj: str, db: Session = Depends(get_db)):
 
 @app.get("/status-fontes")
 def coletar_fontes():
-    ufs = ["ac","al","am","ap","ba","ce","df","es","go","ma","mt","ms","mg","pa","pb","pr",
-           "pe","pi","rj","rn","rs","ro","rr","sc","se","sp","to"]
+    ufs = ["ac", "al", "am", "ap", "ba", "ce", "df", "es", "go", "ma", "mt", "ms", "mg", "pa", "pb", "pr",
+           "pe", "pi", "rj", "rn", "rs", "ro", "rr", "sc", "se", "sp", "to"]
     fontes = [
         "https://www.gov.br/receitafederal/pt-br", "https://www.stf.jus.br", "https://www.stj.jus.br"
     ] + [f"https://www.sefaz.{uf}.gov.br" for uf in ufs]
