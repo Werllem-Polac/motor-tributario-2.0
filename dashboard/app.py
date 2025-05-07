@@ -94,5 +94,8 @@ if acao == "btn-salvar-cadastro":
     return dash.no_update, dash.no_update, dash.no_update, "", "Erro ao salvar", None
 
 
+import os
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 8050))
+    app.run(host="0.0.0.0", port=port, debug=True)
