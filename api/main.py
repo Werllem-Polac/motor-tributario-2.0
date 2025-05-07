@@ -8,6 +8,7 @@ import requests
 from datetime import datetime, timedelta
 from jose import jwt
 from passlib.context import CryptContext
+from entrada_dados.leitor_csv import ler_arquivo_csv
 
 Base.metadata.create_all(bind=engine)
 
