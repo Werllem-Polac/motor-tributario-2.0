@@ -4,7 +4,7 @@ from api.analise_tributaria.analisador_tributario import analisar_notas
 from api.analise_operacional.analisador_operacional import analisar_operacao
 from api.motor_estrategias.motor_estrategias import gerar_estrategias
 from relatorios.gerador_relatorios import gerar_relatorio
-from motor_estrategias.simulador_economico import simular_cenarios
+from api.motor_estrategias.simulador_economico import simular_cenarios
 from relatorios.gerador_excel import gerar_excel
 from relatorios.gerador_pdf import gerar_pdf
 from ia_motor.treinador_estrategias import treinar_ia
