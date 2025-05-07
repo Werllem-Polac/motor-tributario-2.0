@@ -7,7 +7,7 @@ from relatorios.gerador_relatorios import gerar_relatorio
 from api.motor_estrategias.simulador_economico import simular_cenarios
 from relatorios.gerador_excel import gerar_excel
 from relatorios.gerador_pdf import gerar_pdf
-from ia_motor.treinador_estrategias import treinar_ia
+from api.ia_motor.treinador_estrategias import treinamento_ia
 from ia_motor.predictor_estrategias import prever_estrategias
 from dashboard_motor import gerar_dashboard
 from relatorios.gerador_relatorio_graficos import gerar_relatorio_graficos
