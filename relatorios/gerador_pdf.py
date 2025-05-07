@@ -1,56 +1,38 @@
 from fpdf import FPDF
+import pandas as pd
 import os
 
-def gerar_pdf(dados):
-    if dados is None:
-        print("[ERRO] Nenhum dado foi carregado para o Gerador de PDF.")
-        return
+def gerar_pdf(dados: list):
+    try:
+        # Converte os dados para DataFrame
+        df = pd.DataFrame(dados)
 
-    pasta_saida = "relatorios"
-    if not os.path.exists(pasta_saida):
-        os.makedirs(pasta_saida)
+        # Evita erro: “valores escalares requerem índice”
+        if df.empty:
+            raise ValueError("O DataFrame está vazio. Nada a gerar.")
 
-    caminho_pdf = os.path.join(pasta_saida, "relatorio_estrategias.pdf")
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_font("Arial", size=12)
 
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.set_font("Arial", 'B', 16)
-    pdf.cell(0, 10, "Relatório de Estratégias Tributárias", ln=True, align="C")
-    pdf.ln(10)
+        pdf.cell(200, 10, txt="Relatório Tributário", ln=True, align="C")
+        pdf.ln(10)
 
-    pdf.set_font("Arial", '', 12)
+        # Adiciona colunas como título
+        colunas = df.columns.tolist()
+        for col in colunas:
+            pdf.cell(40, 10, txt=col, border=1)
+        pdf.ln()
 
-    for index, nota in dados.iterrows():
-        produto = nota['Produto']
-        ncm = str(nota['NCM'])
-        cfop = str(nota['CFOP'])
-        cst = str(nota['CST'])
+        # Adiciona linhas
+        for _, row in df.iterrows():
+            for col in colunas:
+                pdf.cell(40, 10, txt=str(row[col])[:15], border=1)
+            pdf.ln()
 
-        estrategias = []
+        os.makedirs("relatorios", exist_ok=True)
+        pdf.output("relatorios/saida_analise.pdf")
+        print("✅ Relatório PDF gerado com sucesso!")
 
-        if ncm.startswith('02'):
-            estrategias.append("Tese da Desossa + Essencialidade")
-
-        if ncm.startswith('05') or 'Ossos' in produto or 'Sebos' in produto:
-            estrategias.append("Imunidade Agropecuária (Subprodutos)")
-
-        if ncm.startswith('23'):
-            estrategias.append("Regime Especial para Ração Animal (Isenção PIS/COFINS)")
-
-        if cfop == '5102':
-            estrategias.append("Crédito Presumido ICMS (Operação Interna)")
-
-        if cst.startswith('0') or cst.startswith('1'):
-            estrategias.append("Crédito Integral de ICMS")
-
-        pdf.cell(0, 10, f"Produto: {produto}", ln=True)
-        if estrategias:
-            for estrategia in estrategias:
-                pdf.cell(0, 10, f" - {estrategia}", ln=True)
-        else:
-            pdf.cell(0, 10, "- Nenhuma estratégia clara", ln=True)
-        pdf.ln(5)
-
-    pdf.output(caminho_pdf)
-
-    print(f"\n Relatório PDF gerado com sucesso em: {caminho_pdf}")
+    except Exception as e:
+        print(f"[ERRO] Falha ao gerar o relatório: {str(e)}")
