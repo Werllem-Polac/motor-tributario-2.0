@@ -16,8 +16,10 @@ from relatorios.gerador_relatorio_graficos import gerar_relatorio_graficos
 caminho_arquivo = "entrada_dados/notas_exemplo.csv"
 
 # Função principal do programa
-def main():
-    dados_notas = ler_arquivo_csv(caminho_arquivo)
+def principal():
+    print("🚀 Dados carregados com sucesso! Iniciando análises...")
+    dados_notas = ler_arquivo_csv("api/entrada_dados/exemplo.csv")  # caminho real do seu CSV
+    analisar_notas(dados_notas)
 
     if dados_notas is not None:
         print("\n🚀 Dados carregados com sucesso! Iniciando análises...")
@@ -44,4 +46,4 @@ def main():
 
 # Executar o programa
 if __name__ == "__main__":
-    main()
+    principal()

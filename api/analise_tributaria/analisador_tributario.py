@@ -1,11 +1,15 @@
-# api/analise_tributaria/analisador_tributario.py
-
-def analisar_notas(notas):
-    # lógica de análise tributária (exemplo fictício)
-    resultados = []
-    for nota in notas:
-        if nota.get("valor", 0) > 1000:
-            resultados.append({"nota": nota, "aviso": "valor alto"})
+def analisar_notas(lista):
+    for item in lista:
+        if isinstance(item, str):
+            try:
+                import json
+                nota = json.loads(item)  # caso venha como string JSON
+            except:
+                continue  # ignora entradas inválidas
+        elif isinstance(item, dict):
+            nota = item
         else:
-            resultados.append({"nota": nota, "status": "ok"})
-    return resultados
+            continue
+
+        if nota.get("valor", 0) > 1000:
+            print(f"Nota relevante: {nota}")
