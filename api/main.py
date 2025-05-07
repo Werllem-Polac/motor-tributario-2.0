@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 from jose import jwt
 from passlib.context import CryptContext
 
+
 # --- Cria tabelas ---
 Base.metadata.create_all(bind=engine)
 
