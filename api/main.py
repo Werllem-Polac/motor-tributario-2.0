@@ -4,11 +4,12 @@ from sqlalchemy.orm import Session
 from database import SessionLocal, engine
 from models import Base, Empresa, Produto, PerguntaIA, Usuario
 from schemas import EmpresaSchema, ProdutoSchema, PerguntaIASchema, UsuarioLoginSchema, UsuarioCreateSchema
-import os
-import requests
 from datetime import datetime, timedelta
 from jose import jwt
 from passlib.context import CryptContext
+import requests
+import os
+import uvicorn
 
 # --- Cria tabelas ---
 Base.metadata.create_all(bind=engine)
@@ -123,9 +124,8 @@ def coletar_fontes():
             resultados.append(f"{url} => ERRO: {str(e)}")
     return resultados
 
-import uvicorn
-import os
-
+# --- Execução do servidor com porta da variável de ambiente ---
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))  # Railway define PORT automaticamente
     uvicorn.run("main:app", host="0.0.0.0", port=port)
+
