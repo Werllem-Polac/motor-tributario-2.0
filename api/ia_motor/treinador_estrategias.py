@@ -1,15 +1,18 @@
-# api/ia_motor/treinador_estrategias.py
+# ia_motor/treinador_estrategias.py
 
-def treinamento_ia(dados):
-    """
-    Simula o processo de treinamento de IA para estratégias fiscais.
-    """
-    if not dados:
-        return {"erro": "sem dados fornecidos"}
+def treinar_ia(dados):
+    try:
+        if not isinstance(dados, list) or not dados:
+            raise ValueError("Dados inválidos para treinamento")
 
-    return {
-        "modelo": "MotorIA-v1",
-        "acuracia": 0.87,
-        "estrategias_aprendidas": ["crédito acumulado", "diferimento ICMS", "redução base ST"],
-        "status": "treinamento concluído"
-    }
+        print(" Iniciando treinamento de IA com os dados...")
+
+        # Simulação do processo de "treinamento"
+        for d in dados:
+            cnpj = d.get("cnpj", "desconhecido")
+            print(f"📚 Treinando IA para CNPJ: {cnpj}")
+
+        print(" Treinamento concluído com sucesso!")
+
+    except Exception as e:
+        print(f"[ERRO] Falha no treinamento da IA: {str(e)}")
