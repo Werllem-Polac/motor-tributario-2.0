@@ -9,8 +9,11 @@ def treinar_ia(dados):
 
         # Simulação do processo de "treinamento"
         for d in dados:
-            cnpj = d.get("cnpj", "desconhecido")
-            print(f"📚 Treinando IA para CNPJ: {cnpj}")
+            if isinstance(d, dict):
+                cnpj = d.get("cnpj", "desconhecido")
+                print(f"📚 Treinando IA para CNPJ: {cnpj}")
+            else:
+                print(f"[!] Registro inválido (não é dict): {d}")
 
         print(" Treinamento concluído com sucesso!")
 

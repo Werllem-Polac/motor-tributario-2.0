@@ -47,5 +47,7 @@ def principal():
         print("\n[ATENÇÃO] Não foi possível carregar os dados para análise.")
 
 # Executar o programa
-if __name__ == "__main__":
-    principal()
+iif __name__ == "__main__":
+    # Simulação de entrada
+    dados_exemplo = [{"cnpj": "12345678000100"}, {"cnpj": "99887766000111"}]
+    treinar_ia(dados_exemplo)
