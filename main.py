@@ -20,7 +20,9 @@ def principal():
     print("🚀 Dados carregados com sucesso! Iniciando análises...")
     dados_notas = ler_arquivo_csv("api/entrada_dados/exemplo.csv")  # caminho real do seu CSV
     analisar_notas(dados_notas)
-
+    gerar_excel(dados_notas)
+    gerar_pdf(dados_notas)
+    
     if dados_notas is not None:
         print("\n🚀 Dados carregados com sucesso! Iniciando análises...")
 
