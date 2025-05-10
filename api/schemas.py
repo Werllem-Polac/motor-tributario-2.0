@@ -1,37 +1,22 @@
-from pydantic import BaseModel, EmailStr
-from typing import Optional
-from datetime import datetime
+from pydantic import BaseModel
 
 class UsuarioCreateSchema(BaseModel):
-    email: EmailStr
+    email: str
     senha: str
 
 class UsuarioLoginSchema(BaseModel):
-    email: EmailStr
+    email: str
     senha: str
 
 class EmpresaSchema(BaseModel):
-    razao_social: str
+    nome: str
     cnpj: str
-    dono_id: Optional[int] = None
-
-    class Config:
-        orm_mode = True
 
 class ProdutoSchema(BaseModel):
     nome: str
-    valor: float
+    ncm: str
     empresa_id: int
-
-    class Config:
-        orm_mode = True
 
 class PerguntaIASchema(BaseModel):
     pergunta: str
-    resposta: Optional[str] = None
     cnpj: str
-    empresa_id: int
-    criada_em: Optional[datetime] = None
-
-    class Config:
-        orm_mode = True
