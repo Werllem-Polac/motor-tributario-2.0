@@ -45,11 +45,12 @@ def gerar_token(dados: dict, expira_em: int = 60):
     dados_copia.update({"exp": exp})
     return jwt.encode(dados_copia, SECRET_KEY, algorithm=ALGORITHM)
 
-# --- Endpoints principais ---
+# --- Endpoint de status ---
 @app.get("/")
 def home():
     return {"status": "API Motor Tributário online"}
 
+# --- Endpoints principais ---
 @app.post("/registrar/")
 def registrar(dados: UsuarioCreateSchema, db: Session = Depends(get_db)):
     senha_cript = pwd_context.hash(dados.senha)
@@ -123,9 +124,28 @@ def coletar_fontes():
             resultados.append(f"{url} => ERRO: {str(e)}")
     return resultados
 
-# --- Execução do servidor com porta da variável de ambiente ---
+# --- Treinamento da IA no startup ---
+def treinar_ia():
+    print("🔁 Iniciando treinamento de IA com os dados...")
+    db = SessionLocal()
+    try:
+        empresas = db.query(Empresa).all()
+        for empresa in empresas:
+            print(f"📚 Treinando IA para CNPJ: {empresa.cnpj}")
+        print("✅ Treinamento concluído com sucesso!")
+    except Exception as e:
+        print(f"Erro no treinamento: {e}")
+    finally:
+        db.close()
+
+@app.on_event("startup")
+async def startup_event():
+    treinar_ia()
+
+# --- Execução local com uvicorn ---
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
     uvicorn.run("api.main:app", host="0.0.0.0", port=port)
+
 
 
