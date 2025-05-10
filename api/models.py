@@ -31,4 +31,3 @@ class PerguntaIA(Base):
     pergunta = Column(String)
     cnpj = Column(String)
     criada_em = Column(DateTime, default=datetime.utcnow)
-

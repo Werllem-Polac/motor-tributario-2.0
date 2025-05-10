@@ -31,4 +31,3 @@ class ProdutoSchema(BaseModel):
 class PerguntaIASchema(BaseModel):
     pergunta: str
     cnpj: str
-
