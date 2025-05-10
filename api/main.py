@@ -1,9 +1,9 @@
 from fastapi import FastAPI, Depends, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
-from database import SessionLocal, engine
-from models import Base, Empresa, Produto, PerguntaIA, Usuario
-from schemas import EmpresaSchema, ProdutoSchema, PerguntaIASchema, UsuarioLoginSchema, UsuarioCreateSchema
+from api.database import SessionLocal, engine
+from api.models import Base, Empresa, Produto, PerguntaIA, Usuario
+from api.schemas import EmpresaSchema, ProdutoSchema, PerguntaIASchema, UsuarioLoginSchema, UsuarioCreateSchema
 from datetime import datetime, timedelta
 from jose import jwt
 from passlib.context import CryptContext
@@ -46,7 +46,6 @@ def gerar_token(dados: dict, expira_em: int = 60):
     return jwt.encode(dados_copia, SECRET_KEY, algorithm=ALGORITHM)
 
 # --- Endpoints principais ---
-
 @app.get("/")
 def home():
     return {"status": "API Motor Tributário online"}
@@ -126,7 +125,7 @@ def coletar_fontes():
 
 # --- Execução do servidor com porta da variável de ambiente ---
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8000))  # Railway define PORT automaticamente
+    port = int(os.environ.get("PORT", 8000))
     uvicorn.run("api.main:app", host="0.0.0.0", port=port)
 
 
