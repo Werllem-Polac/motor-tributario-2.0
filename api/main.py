@@ -127,5 +127,6 @@ def coletar_fontes():
 # --- Execução do servidor com porta da variável de ambiente ---
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))  # Railway define PORT automaticamente
-    uvicorn.run("main:app", host="0.0.0.0", port=port)
+    uvicorn.run("api.main:app", host="0.0.0.0", port=port)
+
 
