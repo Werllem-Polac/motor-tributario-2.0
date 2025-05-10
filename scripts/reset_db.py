@@ -1,18 +1,35 @@
-import os
+# scripts/reset_db.py
+
 import sys
+import os
+from sqlalchemy.exc import SQLAlchemyError
+
+# Garante que o diretório raiz esteja no path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from api.database import Base, engine
+from ia_motor.database.engine import Base, engine
+from ia_motor.database import models  # Garante que todas as tabelas sejam registradas
 
-db_path = os.path.join(os.path.dirname(__file__), "..", "ia_motor", "ia_motor.db")
-db_path = os.path.abspath(db_path)
+DB_PATH = "./ia_motor.db"
 
-if os.path.exists(db_path):
-    os.remove(db_path)
-    print("🗑️ Banco de dados antigo removido.")
-else:
-    print("⚠️ Nenhum banco de dados anterior encontrado.")
+def reset_db():
+    print("🗑️ Resetando banco de dados...")
 
-# Criação das tabelas
-Base.metadata.create_all(bind=engine)
-print("✅ Novo banco de dados criado com sucesso.")
+    # Apagar o banco antigo se existir
+    if os.path.exists(DB_PATH):
+        try:
+            Base.metadata.drop_all(bind=engine)
+            print(f"🧨 Banco antigo removido: {DB_PATH}")
+        except Exception as e:
+            print(f"❌ Erro ao remover banco: {e}")
+            return
+
+    # Criar novamente as tabelas
+    try:
+        Base.metadata.create_all(bind=engine)
+        print("✅ Banco recriado com sucesso.")
+    except SQLAlchemyError as e:
+        print(f"❌ Erro ao criar banco: {e}")
+
+if __name__ == "__main__":
+    reset_db()

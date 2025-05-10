@@ -12,7 +12,7 @@ MODELS_DIR = os.path.join(BASE_DIR, "modelos")
 # Tokens e configurações
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "sua-chave-aqui")
 DATABASE_FILE = os.path.join(BASE_DIR, "ia_motor.db")
-DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{DATABASE_FILE}")
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./ia_motor.db")
 
 # Configurações gerais
 DEFAULT_UF = "ES"
