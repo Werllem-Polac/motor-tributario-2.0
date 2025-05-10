@@ -1,57 +1,44 @@
+import pandas as pd
 import os
 
 def gerar_relatorio(dados):
+    print("\n📄 Iniciando geração do relatório tabular...")
+
+    # Garantir que os dados estejam no formato de DataFrame
     if dados is None:
-        print("[ERRO] Nenhum dado foi carregado para o Gerador de Relatórios.")
+        print("[ERRO] Nenhum dado fornecido.")
         return
 
-    # Criar a pasta de saída se não existir
-    pasta_saida = "relatorios"
-    if not os.path.exists(pasta_saida):
-        os.makedirs(pasta_saida)
+    if isinstance(dados, list):
+        dados = pd.DataFrame(dados)
+    elif isinstance(dados, dict):
+        dados = pd.DataFrame([dados])
+    elif not isinstance(dados, pd.DataFrame):
+        print("[ERRO] Formato de dados não reconhecido.")
+        return
 
-    # Nome do arquivo de relatório
-    caminho_relatorio = os.path.join(pasta_saida, "relatorio_estrategias.txt")
+    if dados.empty:
+        print("[ERRO] Nenhum dado válido para relatório.")
+        return
+
+    # Verificar e preencher colunas esperadas
+    colunas_esperadas = ["CNPJ", "Produto", "NCM", "CFOP", "CST"]
+
+    for col in colunas_esperadas:
+        if col not in dados.columns:
+            print(f"[AVISO] Coluna ausente: {col}. Será preenchida com 'não informado'.")
+            dados[col] = "não informado"
+
+    # Reorganizar colunas para saída
+    colunas_saida = [col for col in colunas_esperadas if col in dados.columns]
+
+    # Criar diretório se necessário
+    os.makedirs("relatorios", exist_ok=True)
 
     try:
-        with open(caminho_relatorio, "w", encoding="utf-8") as arquivo:
-            arquivo.write("Relatório de Estratégias Tributárias e Operacionais\n")
-            arquivo.write("===============================================\n\n")
-
-            for index, nota in dados.iterrows():
-                produto = nota['Produto']
-                ncm = str(nota['NCM'])
-                cfop = str(nota['CFOP'])
-                cst = str(nota['CST'])
-
-                estrategias = []
-
-                if ncm.startswith('02'):
-                    estrategias.append(("Aplicar Tese da Desossa + Essencialidade", 10))
-
-                if ncm.startswith('05') or 'Ossos' in produto or 'Sebos' in produto:
-                    estrategias.append(("Aplicar Tese da Imunidade Agropecuária (Subprodutos)", 8))
-
-                if ncm.startswith('23'):
-                    estrategias.append(("Aplicar Regime Especial para Ração Animal (Isenção de PIS/COFINS)", 7))
-
-                if cfop == '5102':
-                    estrategias.append(("Aproveitamento de crédito presumido de ICMS (Operação Interna)", 6))
-
-                if cst.startswith('0') or cst.startswith('1'):
-                    estrategias.append(("Analisar possibilidade de crédito integral de ICMS", 5))
-
-                if estrategias:
-                    arquivo.write(f"Produto: {produto}\n")
-                    estrategias_ordenadas = sorted(estrategias, key=lambda x: x[1], reverse=True)
-                    for estrategia, prioridade in estrategias_ordenadas:
-                        arquivo.write(f" - Estratégia: {estrategia} (Prioridade: {prioridade})\n")
-                    arquivo.write("\n")
-                else:
-                    arquivo.write(f"Produto: {produto}\n")
-                    arquivo.write(" - Nenhuma estratégia tributária clara detectada.\n\n")
-
-            print(f"\n Relatório gerado com sucesso em: {caminho_relatorio}")
-
+        # Salvar relatório principal em CSV + Excel
+        dados[colunas_saida].to_csv("relatorios/relatorio_geral.csv", index=False)
+        dados[colunas_saida].to_excel("relatorios/relatorio_geral.xlsx", index=False)
+        print("✅ Relatório tabular gerado com sucesso em: relatorios/relatorio_geral.*")
     except Exception as e:
-        print(f"[ERRO] Falha ao gerar o relatório: {e}")
+        print(f"[ERRO] Falha ao gerar o relatório: {str(e)}")
