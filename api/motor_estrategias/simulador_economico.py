@@ -4,7 +4,7 @@ def simular_cenarios(dados):
     """
     Simula diferentes cenários econômicos com base nos dados fiscais fornecidos.
     """
-    if not dados:
+    if dados is None or dados.empty:
         return {"erro": "sem dados para simulação"}
 
     return {

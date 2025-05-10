@@ -4,7 +4,7 @@ def gerar_estrategias(dados_fiscais):
     """
     Função fictícia para gerar estratégias com base nos dados fornecidos.
     """
-    if not dados_fiscais:
+    if dados_fiscais is None or dados_fiscais.empty:
         return {"status": "sem dados para estratégia"}
 
     return {

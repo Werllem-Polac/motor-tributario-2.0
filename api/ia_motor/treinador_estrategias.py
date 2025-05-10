@@ -1,23 +1,61 @@
-# ia_motor/treinador_estrategias.py
+import pandas as pd
 
 def treinar_ia(dados):
-    try:
-        if not isinstance(dados, list) or not dados:
-            raise ValueError("Dados inválidos para treinamento")
+    print("\n Iniciando treinamento da IA com os dados disponíveis...")
 
-        print(" Iniciando treinamento de IA com os dados...")
+    # Validar estrutura de dados
+    if dados is None:
+        print("[ERRO] Nenhum dado recebido.")
+        return
 
-        # Simulação do processo de "treinamento"
-        for d in dados:
-            cnpj = d.get("cnpj", "desconhecido")
-            print(f"📚 Treinando IA para CNPJ: {cnpj}")
-            if isinstance(d, dict):
-                cnpj = d.get("cnpj", "desconhecido")
-                print(f"📚 Treinando IA para CNPJ: {cnpj}")
-            else:
-                print(f"[!] Registro inválido (não é dict): {d}")
+    if isinstance(dados, pd.DataFrame):
+        dados = dados.to_dict(orient="records")
 
-        print(" Treinamento concluído com sucesso!")
+    if not isinstance(dados, list):
+        print("[ERRO] Formato inválido para treinamento.")
+        return
 
-    except Exception as e:
-        print(f"[ERRO] Falha no treinamento da IA: {str(e)}")
+    aprendizados = []
+
+    for i, linha in enumerate(dados):
+        if not isinstance(linha, dict):
+            print(f"[AVISO] Ignorando linha inválida #{i+1}: {linha}")
+            continue
+
+        cnpj = linha.get("cnpj") or linha.get("CNPJ") or "desconhecido"
+        produto = linha.get("Produto", "desconhecido")
+        ncm = str(linha.get("NCM", "")).strip()
+        cfop = str(linha.get("CFOP", "")).strip()
+        cst = str(linha.get("CST", "não informado")).strip()
+
+        if not ncm:
+            print(f"[AVISO] Linha {i+1} sem NCM. Ignorada.")
+            continue
+
+        # Lógica simulada de aprendizado
+        estrategia_aprendida = None
+        if ncm.startswith("02"):
+            estrategia_aprendida = "Tese da Desossa + Essencialidade"
+        elif ncm.startswith("05"):
+            estrategia_aprendida = "Subprodutos Imunes"
+        elif ncm.startswith("23"):
+            estrategia_aprendida = "Regime Ração Animal"
+        else:
+            estrategia_aprendida = "Manual Review"
+
+        aprendizados.append({
+            "cnpj": cnpj,
+            "produto": produto,
+            "ncm": ncm,
+            "cfop": cfop,
+            "cst": cst,
+            "estrategia_aprendida": estrategia_aprendida
+        })
+
+    if not aprendizados:
+        print("[ERRO] Nenhum dado válido foi aprendido.")
+        return
+
+    print(f"✅ {len(aprendizados)} padrões aprendidos com sucesso.")
+    for a in aprendizados:
+        print(a)
