@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from ia_motor.rotas import empresas, analise_xml, pareceres, simulador, lote_analise, chat_tributario
+from ia_motor.services.predictor_estrategias import prever_estrategias
 
 app = FastAPI(
     title="Motor Tributário 2.0",
