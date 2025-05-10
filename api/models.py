@@ -1,5 +1,5 @@
 from api.database import Base
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Boolean
 from sqlalchemy.orm import relationship
 from datetime import datetime
 
@@ -8,6 +8,7 @@ class Usuario(Base):
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True)
     senha_hash = Column(String)
+    aceite_lgpd = Column(Boolean, default=False)
 
 class Empresa(Base):
     __tablename__ = "empresas"
@@ -30,3 +31,4 @@ class PerguntaIA(Base):
     pergunta = Column(String)
     cnpj = Column(String)
     criada_em = Column(DateTime, default=datetime.utcnow)
+
