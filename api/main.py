@@ -2,9 +2,9 @@ from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import PlainTextResponse
 from sqlalchemy.orm import Session
-from datetime import datetime, timedelta
 from jose import jwt
 from passlib.context import CryptContext
+from datetime import datetime, timedelta
 import requests
 import os
 import uvicorn
@@ -24,7 +24,7 @@ from api.lgpd.privacidade import politica_privacidade
 Base.metadata.create_all(bind=engine)
 
 # --- Inicialização do app ---
-app = FastAPI()
+app = FastAPI(title="Motor Tributário API", version="1.0")
 
 # --- CORS ---
 app.add_middleware(
@@ -39,11 +39,11 @@ app.add_middleware(
 app.include_router(lgpd_routes.router)
 
 @app.get("/termos", response_class=PlainTextResponse)
-def termos():
+def exibir_termos():
     return termos_uso
 
 @app.get("/privacidade", response_class=PlainTextResponse)
-def privacidade():
+def exibir_politica():
     return politica_privacidade
 
 # --- Banco ---
@@ -167,4 +167,4 @@ async def on_startup():
 # --- Execução local ---
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
-    uvicorn.run("api.main:app", host="0.0.0.0")
+    uvicorn.run("api.main:app", host="0.0.0.0", port=port)
