@@ -28,5 +28,5 @@ app.include_router(chat_tributario.router, prefix="/chat", tags=["Chat Tributár
 
 @app.get("/")
 def root():
-    return {"message": "🚀 Motor Tributário 2.0 rodando com sucesso"}
+    return {"message": "Motor Tributário 2.0 rodando com sucesso"}
 
