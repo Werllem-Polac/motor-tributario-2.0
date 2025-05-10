@@ -1,12 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import PlainTextResponse
 from sqlalchemy.orm import Session
-from api.database import SessionLocal, engine
-from api.models import Base, Empresa, Produto, PerguntaIA, Usuario
-from api.schemas import (
-    EmpresaSchema, ProdutoSchema, PerguntaIASchema,
-    UsuarioLoginSchema, UsuarioCreateSchema
-)
 from datetime import datetime, timedelta
 from jose import jwt
 from passlib.context import CryptContext
@@ -14,13 +9,24 @@ import requests
 import os
 import uvicorn
 
-# --- Cria tabelas do banco ---
+# --- Módulos do projeto ---
+from api.database import SessionLocal, engine
+from api.models import Base, Empresa, Produto, PerguntaIA, Usuario
+from api.schemas import (
+    EmpresaSchema, ProdutoSchema, PerguntaIASchema,
+    UsuarioLoginSchema, UsuarioCreateSchema, UsuarioSchema
+)
+from api.lgpd import routes as lgpd_routes
+from api.lgpd.termos import termos_uso
+from api.lgpd.privacidade import politica_privacidade
+
+# --- Criação das tabelas ---
 Base.metadata.create_all(bind=engine)
 
-# --- Inicialização do FastAPI ---
+# --- Inicialização do app ---
 app = FastAPI()
 
-# --- Middleware de CORS ---
+# --- CORS ---
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -29,7 +35,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- Dependência do banco ---
+# --- Inclusão das rotas LGPD ---
+app.include_router(lgpd_routes.router)
+
+@app.get("/termos", response_class=PlainTextResponse)
+def termos():
+    return termos_uso
+
+@app.get("/privacidade", response_class=PlainTextResponse)
+def privacidade():
+    return politica_privacidade
+
+# --- Banco ---
 def get_db():
     db = SessionLocal()
     try:
@@ -48,7 +65,7 @@ def gerar_token(dados: dict, expira_em: int = 60):
     dados_copia.update({"exp": exp})
     return jwt.encode(dados_copia, SECRET_KEY, algorithm=ALGORITHM)
 
-# --- Rota raiz ---
+# --- Rota principal ---
 @app.get("/")
 def home():
     return {"status": "API Motor Tributário online"}
@@ -129,7 +146,7 @@ def coletar_fontes():
             resultados.append(f"{url} => ERRO: {str(e)}")
     return resultados
 
-# --- Startup: Treinamento de IA (seguro) ---
+# --- Startup: Treinamento de IA ---
 def treinar_ia():
     print("🔁 Iniciando treinamento de IA com os dados...")
     db = SessionLocal()
@@ -147,10 +164,11 @@ def treinar_ia():
 async def on_startup():
     treinar_ia()
 
-# --- Execução local com uvicorn ---
+# --- Execução local ---
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
     uvicorn.run("api.main:app", host="0.0.0.0", port=port)
+
 
 
 

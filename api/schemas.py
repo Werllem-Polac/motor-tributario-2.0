@@ -1,8 +1,8 @@
 from pydantic import BaseModel
 
-class UsuarioCreateSchema(BaseModel):
+class UsuarioSchema(BaseModel):
+    id: int
     email: str
-    senha: str
 
 class UsuarioLoginSchema(BaseModel):
     email: str
@@ -20,3 +20,6 @@ class ProdutoSchema(BaseModel):
 class PerguntaIASchema(BaseModel):
     pergunta: str
     cnpj: str
+
+class Config:
+        orm_mode = True
