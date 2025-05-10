@@ -1,9 +1,12 @@
-from fastapi import FastAPI, Depends, UploadFile, File, HTTPException
+from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from api.database import SessionLocal, engine
 from api.models import Base, Empresa, Produto, PerguntaIA, Usuario
-from api.schemas import EmpresaSchema, ProdutoSchema, PerguntaIASchema, UsuarioLoginSchema, UsuarioCreateSchema
+from api.schemas import (
+    EmpresaSchema, ProdutoSchema, PerguntaIASchema,
+    UsuarioLoginSchema, UsuarioCreateSchema
+)
 from datetime import datetime, timedelta
 from jose import jwt
 from passlib.context import CryptContext
@@ -11,13 +14,13 @@ import requests
 import os
 import uvicorn
 
-# --- Cria tabelas ---
+# --- Cria tabelas do banco ---
 Base.metadata.create_all(bind=engine)
 
-# --- Inicialização do app ---
+# --- Inicialização do FastAPI ---
 app = FastAPI()
 
-# --- CORS Middleware ---
+# --- Middleware de CORS ---
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -26,7 +29,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- Dependência para sessão do banco ---
+# --- Dependência do banco ---
 def get_db():
     db = SessionLocal()
     try:
@@ -34,7 +37,7 @@ def get_db():
     finally:
         db.close()
 
-# --- Configuração de segurança ---
+# --- Segurança ---
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 SECRET_KEY = "segredo-super-forte"
 ALGORITHM = "HS256"
@@ -45,7 +48,7 @@ def gerar_token(dados: dict, expira_em: int = 60):
     dados_copia.update({"exp": exp})
     return jwt.encode(dados_copia, SECRET_KEY, algorithm=ALGORITHM)
 
-# --- Endpoint de status ---
+# --- Rota raiz ---
 @app.get("/")
 def home():
     return {"status": "API Motor Tributário online"}
@@ -111,7 +114,9 @@ def coletar_fontes():
     ufs = ["ac", "al", "am", "ap", "ba", "ce", "df", "es", "go", "ma", "mt", "ms", "mg", "pa", "pb", "pr",
            "pe", "pi", "rj", "rn", "rs", "ro", "rr", "sc", "se", "sp", "to"]
     fontes = [
-        "https://www.gov.br/receitafederal/pt-br", "https://www.stf.jus.br", "https://www.stj.jus.br"
+        "https://www.gov.br/receitafederal/pt-br",
+        "https://www.stf.jus.br",
+        "https://www.stj.jus.br"
     ] + [f"https://www.sefaz.{uf}.gov.br" for uf in ufs]
 
     resultados = []
@@ -124,7 +129,7 @@ def coletar_fontes():
             resultados.append(f"{url} => ERRO: {str(e)}")
     return resultados
 
-# --- Treinamento da IA no startup ---
+# --- Startup: Treinamento de IA (seguro) ---
 def treinar_ia():
     print("🔁 Iniciando treinamento de IA com os dados...")
     db = SessionLocal()
@@ -139,13 +144,14 @@ def treinar_ia():
         db.close()
 
 @app.on_event("startup")
-async def startup_event():
+async def on_startup():
     treinar_ia()
 
 # --- Execução local com uvicorn ---
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
     uvicorn.run("api.main:app", host="0.0.0.0", port=port)
+
 
 
 
