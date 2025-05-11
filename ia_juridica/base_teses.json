@@ -1,0 +1,16 @@
+[
+  {
+    "id": "tese_001",
+    "nome": "Crédito de ICMS sobre insumo frigorífico",
+    "descricao": "Permite o aproveitamento de créditos de ICMS sobre produtos utilizados na industrialização de carnes.",
+    "segmentos": ["frigorifico", "alimentos"],
+    "embedding": null
+  },
+  {
+    "id": "tese_002",
+    "nome": "Isenção de ICMS para exportações indiretas",
+    "descricao": "Trata da isenção do ICMS nas operações de exportação realizadas por trading ou comercial exportadora.",
+    "segmentos": ["comercio exterior", "agronegocio"],
+    "embedding": null
+  }
+]
