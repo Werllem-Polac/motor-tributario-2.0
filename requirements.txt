@@ -104,3 +104,5 @@ Werkzeug==3.0.6
 XlsxWriter==3.2.3
 zipp==3.21.0
 zstandard==0.23.0
+psycopg2-binary
+
