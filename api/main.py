@@ -1,26 +1,36 @@
 """
 Ponto de entrada principal da API FastAPI.
-Responsável por configurar middlewares, conectar banco de dados e registrar rotas.
+Configura middlewares, banco de dados e rotas usando configuração centralizada.
 """
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
 from api.database.session import engine, Base
-from api.empresas import routes as empresas_routes
+from api.config import settings
 
-app = FastAPI()
+# Importa e registra rotas modulares
+from api.empresas.routes import router as empresas_router
+# (adicione aqui outros routers conforme modularização)
 
-# Middleware de CORS
+# Instancia a aplicação
+app = FastAPI(
+    title=settings.PROJECT_NAME,
+    version=settings.API_VERSION
+)
+
+# Middleware de CORS (ajuste origens conforme necessário)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  # Em produção, especifique domínios permitidos
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Criação automática das tabelas (migrations recomendadas futuramente)
+# Criação automática das tabelas (use Alembic futuramente em produção)
 Base.metadata.create_all(bind=engine)
 
-# Registro de rotas
-app.include_router(empresas_routes.router)
+# Registro das rotas
+app.include_router(empresas_router)
+
