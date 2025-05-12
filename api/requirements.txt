@@ -1,8 +1,23 @@
+# 🔧 Backend principal
 fastapi
 uvicorn
 sqlalchemy
+psycopg2-binary
 python-jose
 passlib[bcrypt]
 requests
 pydantic
+python-dotenv
+
+# 🤖 IA e embeddings
+sentence-transformers
+faiss-cpu
+
+# 🧠 NLP e utilitários para interpretação de texto jurídico
+dateparser
+scikit-learn
+
+# ⚙️ Extras recomendados para performance e compatibilidade
+tqdm
+
 

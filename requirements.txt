@@ -1,3 +1,25 @@
+# 🔧 Core do Motor Tributário
+fastapi==0.115.12
+uvicorn==0.34.2
+SQLAlchemy==2.0.40
+python-dotenv==1.1.0
+psycopg2-binary
+
+# 📊 Visualização e Dash
+dash==3.0.4
+dash-bootstrap-components==2.0.2
+plotly==6.0.1
+
+# 🤖 IA e embeddings
+sentence-transformers
+langchain
+openai==1.76.2
+scikit-learn==1.6.1
+
+# 🧠 NLP e suporte vetorial
+faiss-cpu==1.11.0
+tqdm==4.67.1
+
 annotated-types==0.7.0
 anyio==4.9.0
 bcrypt==4.3.0
@@ -105,4 +127,7 @@ XlsxWriter==3.2.3
 zipp==3.21.0
 zstandard==0.23.0
 psycopg2-binary
+sentence-transformers
+# 📅 Processamento de datas
+dateparser==1.2.0
 

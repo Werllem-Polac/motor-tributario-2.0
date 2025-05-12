@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from api.database.session import engine, Base
-from api.routes import ia_juridica  # 🔁 aqui
+from api.routes import ia_juridica  # ou outras rotas
 
 app = FastAPI(
     title="Motor Tributário Inteligente",
@@ -21,7 +21,7 @@ app.add_middleware(
 # Criação automática das tabelas
 Base.metadata.create_all(bind=engine)
 
-# ✅ Inclusão da rota IA Jurídica
+# Rotas
 app.include_router(ia_juridica.router)
 
 @app.get("/")
