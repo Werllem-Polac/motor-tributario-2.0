@@ -5,7 +5,7 @@ import os
 from dotenv import load_dotenv
 from sqlalchemy.orm import Session
 from models.models import CNAE
-from database import SessionLocal, Base, engine
+from app.api.database.session import SessionLocal, Base, engine
 import csv
 
 # 🔁 Carrega variáveis do arquivo .env

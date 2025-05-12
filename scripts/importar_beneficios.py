@@ -1,7 +1,7 @@
 import csv
 from sqlalchemy.orm import Session
 from models.models import BeneficioFiscal, CNAEBeneficio, CNAE
-from database import SessionLocal, Base, engine
+from app.api.database.session import SessionLocal, Base, engine
 
 # Garante criação das tabelas
 Base.metadata.create_all(bind=engine)
@@ -42,3 +42,4 @@ def importar_beneficios(path_csv: str):
 
 # Exemplo de uso:
 # importar_beneficios("dados/beneficios.csv")
+

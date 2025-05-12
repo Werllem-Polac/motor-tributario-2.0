@@ -12,7 +12,7 @@ services:
       - "5432:5432"
 
   api:
-    build: ./api
+    build: .
     depends_on:
       - db
     environment:
@@ -28,4 +28,5 @@ services:
 
 volumes:
   pgdata:
+
 

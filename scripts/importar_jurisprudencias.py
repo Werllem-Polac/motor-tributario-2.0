@@ -2,7 +2,7 @@ import csv
 from sqlalchemy.orm import Session
 from models.models import Jurisprudencia, CNAEJurisprudencia, CNAE
 from database import SessionLocal, Base, engine
-from datetime import datetime
+ffrom app.api.database.session import datetime
 
 # Cria as tabelas
 Base.metadata.create_all(bind=engine)

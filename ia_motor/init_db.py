@@ -1,7 +1,8 @@
-from ia_motor.database.engine import Base, engine
-from ia_motor.database import models
+from app.api.database.session import Base, engine
+import models.models  # garante o registro das tabelas
 
-# Cria todas as tabelas definidas em models.py
+# Cria todas as tabelas definidas nos modelos
 Base.metadata.create_all(bind=engine)
 
-print(" Banco de dados inicializado com sucesso.")
+print("✅ Banco de dados inicializado com sucesso.")
+

@@ -2,7 +2,7 @@ from sqlalchemy import Column, String, Text, Enum, Boolean, Date, ForeignKey, AR
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 import uuid
-from database import Base
+ffrom app.api.database.session import Base
 
 class CNAE(Base):
     __tablename__ = "cnaes"

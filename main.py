@@ -1,3 +1,6 @@
-from api.main import app
+# main.py na raiz do projeto
+from app.api.main import app
 
-# Ponto de entrada para o Uvicorn no Docker
+# Isso garante que o Uvicorn ou qualquer outro servidor que rode "main:app"
+# encontre a instância correta
+

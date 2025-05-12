@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from database import get_db
+from app.api.database.session import get_db
 from services.motor_regras import MotorRegrasTributarias
 from schemas.analise import RequisicaoAnalise, ResultadoAnalise
 

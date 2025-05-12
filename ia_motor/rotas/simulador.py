@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from ia_motor.database.engine import SessionLocal
-from ia_motor.services import simulador_fiscal
+from app.api.database.session import SessionLocal
+from app.api.services import simulador_fiscal  # ajuste conforme o local real do script
 
 router = APIRouter()
 
+# Dependência do banco de dados
 def get_db():
     db = SessionLocal()
     try:
@@ -15,4 +16,5 @@ def get_db():
 @router.get("/simular")
 def simular(cnpj: str, tese: str, db: Session = Depends(get_db)):
     return simulador_fiscal.simular_por_tese(cnpj, tese, db)
+
 

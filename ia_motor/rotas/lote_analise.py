@@ -1,11 +1,13 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from ia_motor.database.engine import SessionLocal
-from ia_motor.database import utils
-from ia_motor.services import auto_estrategista
+from typing import List  # Corrige tipagem do FastAPI
+from app.api.database.session import SessionLocal
+from app.api.database import utils
+from app.api.services import auto_estrategista  # ajuste o caminho conforme sua estrutura
 
 router = APIRouter()
 
+# Dependência do banco de dados
 def get_db():
     db = SessionLocal()
     try:
@@ -14,7 +16,7 @@ def get_db():
         db.close()
 
 @router.post("/executar")
-def executar_lote(cnpjs: list[str], db: Session = Depends(get_db)):
+def executar_lote(cnpjs: List[str], db: Session = Depends(get_db)):
     resultados = []
     for cnpj in cnpjs:
         empresa = utils.get_empresa_by_cnpj(db, cnpj)
@@ -26,3 +28,4 @@ def executar_lote(cnpjs: list[str], db: Session = Depends(get_db)):
                 "estrategia": estrategia
             })
     return resultados
+

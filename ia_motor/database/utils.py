@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from ia_motor.database import models
+from app.models import models  # ✅ caminho atualizado
 
 def get_empresa_by_cnpj(db: Session, cnpj: str):
     return db.query(models.Empresa).filter(models.Empresa.cnpj == cnpj).first()
@@ -43,4 +43,3 @@ def registrar_analise(db: Session, empresa_id: int, tese: str, economia: float, 
     db.commit()
     db.refresh(analise)
     return analise
-
